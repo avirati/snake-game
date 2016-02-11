@@ -1,0 +1,12 @@
+body {
+    background-color: #282732;
+}
+
+#game {
+    border: 1px solid #fff;
+}
+
+.center {
+    display: block;
+    margin: 0 auto;
+}
