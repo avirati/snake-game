@@ -6,11 +6,12 @@ var SnakeGame = function (options) {
 		ELEM = document.getElementById(options.canvas),
 		BLOCK_SIZE = options.blockSize || 10,
 		SNAKE_SIZE = options.snakeSize || 10,
-		SPEED = options.speed || 10;
+		SPEED = options.speed || 10,
+		FOOD_VALUE = options.foodValue || 1;
 
 	var context = ELEM.getContext('2d'),
 		snake = [],
-		direction = { current: 'right'},
+		direction = {current: 'right'},
 		interval = 2000 / SPEED,
 		food;
 
@@ -22,12 +23,12 @@ var SnakeGame = function (options) {
 		this.y = y;
 	}
 
-	function Food (coordinate, value) {
+	function Food(coordinate, value) {
 		this.x = coordinate.x;
 		this.y = coordinate.y;
 
 		this.value = value;
-		
+
 		this.spawn = function () {
 			context.fillStyle = '#000';
 			context.fillRect(this.x * BLOCK_SIZE, this.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
@@ -38,7 +39,7 @@ var SnakeGame = function (options) {
 		context.clearRect(0, 0, WIDTH, HEIGHT);
 		context.fillStyle = '#fff';
 		context.fillRect(0, 0, WIDTH, HEIGHT);
-		if(food)
+		if (food)
 			food.spawn();
 	}
 
@@ -98,6 +99,11 @@ var SnakeGame = function (options) {
 				37: 'left',
 				39: 'right'
 			}
+
+			if(typeof keyMap[e.keyCode] === typeof undefined) {
+				return;
+			}
+
 			switch (e.keyCode) {
 				case 38 :   //UP
 					allow = direction.current !== 'down';
@@ -112,11 +118,11 @@ var SnakeGame = function (options) {
 					allow = direction.current !== 'left';
 					break;
 			}
-			if(allow) {
+			if (allow) {
 				direction.current = keyMap[e.keyCode];
 			}
 
-			if(e.keyCode)
+			if (e.keyCode)
 				e.preventDefault();
 		}
 	}
@@ -126,7 +132,68 @@ var SnakeGame = function (options) {
 		var rand_y = Math.round(Math.random() * (HEIGHT - BLOCK_SIZE) / BLOCK_SIZE);
 
 		var c = new Coordinate(rand_x, rand_y);
-		food = new Food(c, 1);
+		food = new Food(c, FOOD_VALUE);
+	}
+
+	function checkFoodCollision() {
+		var head = snake[snake.length - 1];
+		return head.x === food.x && head.y === food.y;
+	}
+
+	function eatFood() {
+		var tailDirection;
+
+		var tail = snake[0];
+		var tailPredecessor = snake[1];
+
+		if (tail.x === tailPredecessor.x) {      //UP or DOWN
+			if (tail.y > tailPredecessor.y) {    //UP
+				tailDirection = 'up';
+			}
+			else {
+				tailDirection = 'down';
+			}
+		}
+		else if(tail.y === tailPredecessor.y) {  //RIGHT OR LEFT
+			if (tail.x > tailPredecessor.x) {    //LEFT
+				tailDirection = 'left';
+			}
+			else {
+				tailDirection = 'right';
+			}
+		}
+
+		switch (tailDirection) {
+			case 'left':
+				for (var i = 0; i < food.value; i++) {
+					var tail = snake[0];
+					var increment = new Coordinate(tail.x + 1, tail.y);
+					snake.unshift(increment);
+				}
+				break;
+			case 'right':
+				for (var i = 0; i < food.value; i++) {
+					var tail = snake[0];
+					var increment = new Coordinate(tail.x - 1, tail.y);
+					snake.unshift(increment);
+				}
+				break;
+			case 'up':
+				for (var i = 0; i < food.value; i++) {
+					var tail = snake[0];
+					var increment = new Coordinate(tail.x, tail.y + 1);
+					snake.unshift(increment);
+				}
+				break;
+			case 'down':
+				for (var i = 0; i < food.value; i++) {
+					var tail = snake[0];
+					var increment = new Coordinate(tail.x, tail.y - 1);
+					snake.unshift(increment);
+				}
+				break;
+		}
+		spawnFood();
 	}
 
 	var initCanvas = function () {
@@ -135,13 +202,20 @@ var SnakeGame = function (options) {
 		}
 
 		ELEM.width = WIDTH;
-		ELEM.height = HEIGHT
+		ELEM.height = HEIGHT;
 	}
 
 	function startGame() {
 		setInterval(function () {
+
 			move(direction.current);
 			drawSnake();
+
+			var reachedFood = checkFoodCollision();
+			if (reachedFood) {
+				eatFood();
+			}
+
 		}, interval);
 	}
 
