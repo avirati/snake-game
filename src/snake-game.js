@@ -60,7 +60,12 @@ var SnakeGame = function (options) {
 		for (var i = 0; i < snake.length; i++) {
 			var c = snake[i]
 			context.fillStyle = "#000";
-			context.fillRect(c.x * BLOCK_SIZE, c.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+			context.strokeRect(c.x * BLOCK_SIZE, c.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+
+			if(i === snake.length - 1) {    //Paint the head
+				context.fillStyle = "red";
+				context.fillRect(c.x * BLOCK_SIZE, c.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+			}
 		}
 	}
 
