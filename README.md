@@ -1,6 +1,6 @@
 # Snake Game
 
-The classic Snake Game, made in Vanilla JS
+The classic Snake Game, made in Vanilla JS, [Demo]
 
 ### Run the project
 
@@ -15,3 +15,6 @@ License
 ----
 
 MIT
+
+
+[Demo]: http://snake-classic.herokuapp.com/
