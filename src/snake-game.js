@@ -13,7 +13,8 @@ var SnakeGame = function (options) {
 		snake = [],
 		direction = {current: 'right'},
 		interval = 2000 / SPEED,
-		food;
+		food,
+		game;
 
 	function Coordinate(x, y) {
 		if (typeof x === typeof undefined || typeof y === typeof undefined) {
@@ -140,6 +141,14 @@ var SnakeGame = function (options) {
 		return head.x === food.x && head.y === food.y;
 	}
 
+	function checkWallCollision() {
+		var head = snake[snake.length - 1];
+		if(head.x >= WIDTH/BLOCK_SIZE || head.x <= -1 || head.y >= HEIGHT/BLOCK_SIZE || head.y <= -1) {
+			clearInterval(game);
+			alert("Game Over !!");
+		}
+	}
+
 	function eatFood() {
 		var tailDirection;
 
@@ -206,7 +215,7 @@ var SnakeGame = function (options) {
 	}
 
 	function startGame() {
-		setInterval(function () {
+		game = setInterval(function () {
 
 			move(direction.current);
 			drawSnake();
@@ -215,6 +224,8 @@ var SnakeGame = function (options) {
 			if (reachedFood) {
 				eatFood();
 			}
+
+			checkWallCollision();
 
 		}, interval);
 	}
