@@ -50,6 +50,21 @@ var SnakeGame = function (options) {
 				tail.y = head.y;
 				snake.push(tail);
 				break;
+			case 'down':
+				tail.x = head.x;
+				tail.y = head.y + 1;
+				snake.push(tail);
+				break;
+			case 'left':
+				tail.x = head.x - 1;
+				tail.y = head.y;
+				snake.push(tail);
+				break;
+			case 'up':
+				tail.x = head.x;
+				tail.y = head.y - 1;
+				snake.push(tail);
+				break;
 		}
 	}
 
