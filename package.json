@@ -1,0 +1,11 @@
+{
+  "name": "snakeGame",
+  "private": true,
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "dependencies": {
+    "forever": "^0.15.1",
+    "http-server": "^0.8.5"
+  }
+}
