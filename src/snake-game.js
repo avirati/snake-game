@@ -5,10 +5,13 @@ var SnakeGame = function (options) {
 		HEIGHT = options.height || 600,
 		ELEM = document.getElementById(options.canvas),
 		BLOCK_SIZE = options.blockSize || 5,
-		SNAKE_SIZE = options.snakeSize || 10;
+		SNAKE_SIZE = options.snakeSize || 10,
+		SPEED = options.speed || 10;
 
 	var context = ELEM.getContext('2d'),
-		snake = [];
+		snake = [],
+		direction = { current: 'right'},
+		interval = 2000 / SPEED;
 
 	function Coordinate(x, y) {
 		if (typeof x === typeof undefined || typeof y === typeof undefined) {
@@ -38,6 +41,18 @@ var SnakeGame = function (options) {
 		}
 	}
 
+	function move(direction) {
+		var tail = snake.shift();
+		var head = snake[snake.length - 1];
+		switch (direction) {
+			case 'right':
+				tail.x = head.x + 1;
+				tail.y = head.y;
+				snake.push(tail);
+				break;
+		}
+	}
+
 	var initCanvas = function () {
 		if (ELEM === null) {
 			throw new Error("Could not find the target Canvas : " + options.canvas);
@@ -45,6 +60,13 @@ var SnakeGame = function (options) {
 
 		ELEM.style.width = WIDTH + 'px';
 		ELEM.style.height = HEIGHT + 'px';
+	}
+
+	function startGame() {
+		setInterval(function () {
+			move(direction.current);
+			drawSnake();
+		}, interval);
 	}
 
 	//Bootstrap Everything
@@ -55,6 +77,8 @@ var SnakeGame = function (options) {
 		initializeSnake();
 		//Draw the snake for the first time
 		drawSnake();
+		//Start the game
+		startGame();
 	}
 
 	init();
