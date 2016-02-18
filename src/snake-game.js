@@ -14,7 +14,9 @@ var SnakeGame = function (options) {
 		direction = {current: 'right'},
 		interval = 2000 / SPEED,
 		food,
-		game;
+		game,
+		score_card,
+		score = 0;
 
 	function Coordinate(x, y) {
 		if (typeof x === typeof undefined || typeof y === typeof undefined) {
@@ -101,7 +103,7 @@ var SnakeGame = function (options) {
 				39: 'right'
 			}
 
-			if(typeof keyMap[e.keyCode] === typeof undefined) {
+			if (typeof keyMap[e.keyCode] === typeof undefined) {
 				return;
 			}
 
@@ -143,7 +145,7 @@ var SnakeGame = function (options) {
 
 	function checkWallCollision() {
 		var head = snake[snake.length - 1];
-		if(head.x >= WIDTH/BLOCK_SIZE || head.x <= -1 || head.y >= HEIGHT/BLOCK_SIZE || head.y <= -1) {
+		if (head.x >= WIDTH / BLOCK_SIZE || head.x <= -1 || head.y >= HEIGHT / BLOCK_SIZE || head.y <= -1) {
 			gameOver();
 		}
 	}
@@ -151,9 +153,9 @@ var SnakeGame = function (options) {
 	function checkSelfCollision() {
 		var head = snake[0];
 
-		for(var i = 1; i < snake.length; i++) {
+		for (var i = 1; i < snake.length; i++) {
 			var c = snake[i];
-			if(head.x == c.x && head.y == c.y) {
+			if (head.x == c.x && head.y == c.y) {
 				gameOver();
 				return;
 			}
@@ -174,7 +176,7 @@ var SnakeGame = function (options) {
 				tailDirection = 'down';
 			}
 		}
-		else if(tail.y === tailPredecessor.y) {  //RIGHT OR LEFT
+		else if (tail.y === tailPredecessor.y) {  //RIGHT OR LEFT
 			if (tail.x > tailPredecessor.x) {    //LEFT
 				tailDirection = 'left';
 			}
@@ -213,6 +215,10 @@ var SnakeGame = function (options) {
 				}
 				break;
 		}
+
+		//Change score
+		updateScore();
+
 		spawnFood();
 	}
 
@@ -223,6 +229,19 @@ var SnakeGame = function (options) {
 
 		ELEM.width = WIDTH;
 		ELEM.height = HEIGHT;
+	}
+
+	function initScoreCard() {
+		score_card = document.createElement('div');
+		score_card.innerHTML = 'Score : ' + score;
+		score_card.style['text-align'] = 'center';
+		score_card.style['margin'] = '20px';
+		score_card.style['font-family'] = 'monospace';
+		score_card.style['font-size'] = '20px';
+		score_card.style['color'] = '#fff';
+		score_card.style['font-weight'] = 'bold';
+
+		document.body.appendChild(score_card);
 	}
 
 	function startGame() {
@@ -242,6 +261,11 @@ var SnakeGame = function (options) {
 		}, interval);
 	}
 
+	function updateScore() {
+		score += food.value;
+		score_card.innerHTML = 'Score : ' + score;
+	}
+
 	function gameOver() {
 		clearInterval(game);
 		alert("Game Over !!");
@@ -249,6 +273,8 @@ var SnakeGame = function (options) {
 
 	//Bootstrap Everything
 	var init = function () {
+		//Init ScoreCard
+		initScoreCard();
 		//Initialize Canvas
 		initCanvas();
 		//Create a snake
