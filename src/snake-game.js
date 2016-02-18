@@ -11,7 +11,8 @@ var SnakeGame = function (options) {
 	var context = ELEM.getContext('2d'),
 		snake = [],
 		direction = { current: 'right'},
-		interval = 2000 / SPEED;
+		interval = 2000 / SPEED,
+		food;
 
 	function Coordinate(x, y) {
 		if (typeof x === typeof undefined || typeof y === typeof undefined) {
@@ -19,6 +20,26 @@ var SnakeGame = function (options) {
 		}
 		this.x = x;
 		this.y = y;
+	}
+
+	function Food (coordinate, value) {
+		this.x = coordinate.x;
+		this.y = coordinate.y;
+
+		this.value = value;
+		
+		this.spawn = function () {
+			context.fillStyle = '#000';
+			context.fillRect(this.x * BLOCK_SIZE, this.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+		}
+	}
+
+	function refresh() {
+		context.clearRect(0, 0, WIDTH, HEIGHT);
+		context.fillStyle = '#fff';
+		context.fillRect(0, 0, WIDTH, HEIGHT);
+		if(food)
+			food.spawn();
 	}
 
 	function initializeSnake() {
@@ -30,9 +51,7 @@ var SnakeGame = function (options) {
 
 	function drawSnake() {
 
-		context.clearRect(0, 0, WIDTH, HEIGHT);
-		context.fillStyle = '#fff';
-		context.fillRect(0, 0, WIDTH, HEIGHT);
+		refresh();
 
 		for (var i = 0; i < snake.length; i++) {
 			var c = snake[i]
@@ -102,6 +121,14 @@ var SnakeGame = function (options) {
 		}
 	}
 
+	function spawnFood() {
+		var rand_x = Math.round(Math.random() * (WIDTH - BLOCK_SIZE) / BLOCK_SIZE);
+		var rand_y = Math.round(Math.random() * (HEIGHT - BLOCK_SIZE) / BLOCK_SIZE);
+
+		var c = new Coordinate(rand_x, rand_y);
+		food = new Food(c, 1);
+	}
+
 	var initCanvas = function () {
 		if (ELEM === null) {
 			throw new Error("Could not find the target Canvas : " + options.canvas);
@@ -130,6 +157,8 @@ var SnakeGame = function (options) {
 		setUpKeyBinding();
 		//Start the game
 		startGame();
+		//Spawn a food item
+		spawnFood();
 	}
 
 	init();
