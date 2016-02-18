@@ -4,7 +4,7 @@ var SnakeGame = function (options) {
 	var WIDTH = options.width || 800,
 		HEIGHT = options.height || 600,
 		ELEM = document.getElementById(options.canvas),
-		BLOCK_SIZE = options.blockSize || 5,
+		BLOCK_SIZE = options.blockSize || 10,
 		SNAKE_SIZE = options.snakeSize || 10,
 		SPEED = options.speed || 10;
 
@@ -68,13 +68,47 @@ var SnakeGame = function (options) {
 		}
 	}
 
+	function setUpKeyBinding() {
+		document.onkeydown = function (e) {
+			e = e || window.event;
+
+			var allow = true;
+			var keyMap = {
+				38: 'up',
+				40: 'down',
+				37: 'left',
+				39: 'right'
+			}
+			switch (e.keyCode) {
+				case 38 :   //UP
+					allow = direction.current !== 'down';
+					break;
+				case 40 :   //DOWN
+					allow = direction.current !== 'up';
+					break;
+				case 37 :   //LEFT
+					allow = direction.current !== 'right';
+					break;
+				case 39 :   //RIGHT
+					allow = direction.current !== 'left';
+					break;
+			}
+			if(allow) {
+				direction.current = keyMap[e.keyCode];
+			}
+
+			if(e.keyCode)
+				e.preventDefault();
+		}
+	}
+
 	var initCanvas = function () {
 		if (ELEM === null) {
 			throw new Error("Could not find the target Canvas : " + options.canvas);
 		}
 
-		ELEM.style.width = WIDTH + 'px';
-		ELEM.style.height = HEIGHT + 'px';
+		ELEM.width = WIDTH;
+		ELEM.height = HEIGHT
 	}
 
 	function startGame() {
@@ -92,6 +126,8 @@ var SnakeGame = function (options) {
 		initializeSnake();
 		//Draw the snake for the first time
 		drawSnake();
+		//Setup key bindings
+		setUpKeyBinding();
 		//Start the game
 		startGame();
 	}
