@@ -144,8 +144,19 @@ var SnakeGame = function (options) {
 	function checkWallCollision() {
 		var head = snake[snake.length - 1];
 		if(head.x >= WIDTH/BLOCK_SIZE || head.x <= -1 || head.y >= HEIGHT/BLOCK_SIZE || head.y <= -1) {
-			clearInterval(game);
-			alert("Game Over !!");
+			gameOver();
+		}
+	}
+
+	function checkSelfCollision() {
+		var head = snake[0];
+
+		for(var i = 1; i < snake.length; i++) {
+			var c = snake[i];
+			if(head.x == c.x && head.y == c.y) {
+				gameOver();
+				return;
+			}
 		}
 	}
 
@@ -226,8 +237,14 @@ var SnakeGame = function (options) {
 			}
 
 			checkWallCollision();
+			checkSelfCollision();
 
 		}, interval);
+	}
+
+	function gameOver() {
+		clearInterval(game);
+		alert("Game Over !!");
 	}
 
 	//Bootstrap Everything
