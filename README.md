@@ -17,4 +17,4 @@ License
 MIT
 
 
-[Demo]: http://snake-classic.herokuapp.com/
+[Demo]: https://snake.avinashv.dev/
